@@ -286,30 +286,37 @@ df_compute_address_inline(
     ) 
 {
     //resolve endianness issue
-    address[1] = (uint8_t)(page & 0xff);        
-    address[0] = (uint8_t)((page >> 8) & 0xff);
+      //Serial.println(address[0],HEX);
+       // Serial.println(page >> 8);
+    address[0] = (uint8_t)((page >> (8 - (memory->bits_per_page - 8))) & 0xff);
+    address[1] = (uint8_t)(page & 0xff);            
     address[2] = 0;
 
-    // Serial.println("Address in fn - 1");
-    // Serial.println(page);
-    // Serial.println(*((uint16_t*)address));
-    // Serial.println(address[0],HEX);
-    // Serial.println(address[1],HEX);
-    // Serial.println(address[2],HEX);
-
-    // Serial.print("bits/page: ");
-    // Serial.println(memory->bits_per_page);
-    // Serial.println(memory->actual_page_size);
-
+    if (page > 3000)
+    {
+     Serial.println("Address in fn - 1");
+     Serial.println(page);
+     Serial.println(*((uint16_t*)address));
+     Serial.println(address[0],HEX);
+     Serial.println(address[1],HEX);
+     Serial.println(address[2],HEX);
+    }
+    /*
+    Serial.print("bits/page: ");
+    Serial.println(memory->bits_per_page);
+    Serial.println(memory->actual_page_size);
+*/
     //shift for the correct positions
     *((uint16_t*)address) = (*((uint16_t*)address)) << (memory->bits_per_page - 8);
-    
-    // Serial.println("Address in fn - 2");
+     if (page > 3000)
+    {
+    Serial.println("Address in fn - 2");
     // Serial.println(page);
-    // Serial.println(*((uint16_t*)address));
-    // Serial.println(address[0],HEX);
-    // Serial.println(address[1],HEX);
-    // Serial.println(address[2],HEX);
+    Serial.println(*((uint16_t*)address));
+    Serial.println(address[0],HEX);
+    Serial.println(address[1],HEX);
+    Serial.println(address[2],HEX);
+    }
 }
 
 void
