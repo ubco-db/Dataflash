@@ -114,7 +114,7 @@ df_buffer_to_MM(
 
 /** @todo add protection for incorrect commands */
 void
-df_MM_to_buffer(
+ df_MM_to_buffer(
     memory_t*                   memory,
     buffer_t                    buffer_command,
     df_page_addr_t              page
@@ -285,38 +285,35 @@ df_compute_address_inline(
     uint8_t*                    address
     ) 
 {
-    //resolve endianness issue
-      //Serial.println(address[0],HEX);
-       // Serial.println(page >> 8);
-    address[0] = (uint8_t)((page >> (8 - (memory->bits_per_page - 8))) & 0xff);
-    address[1] = (uint8_t)(page & 0xff);            
-    address[2] = 0;
 
-    if (page > 3000)
-    {
-     Serial.println("Address in fn - 1");
-     Serial.println(page);
-     Serial.println(*((uint16_t*)address));
-     Serial.println(address[0],HEX);
-     Serial.println(address[1],HEX);
-     Serial.println(address[2],HEX);
-    }
-    /*
-    Serial.print("bits/page: ");
-    Serial.println(memory->bits_per_page);
-    Serial.println(memory->actual_page_size);
-*/
-    //shift for the correct positions
-    *((uint16_t*)address) = (*((uint16_t*)address)) << (memory->bits_per_page - 8);
-     if (page > 3000)
-    {
-    Serial.println("Address in fn - 2");
-    // Serial.println(page);
-    Serial.println(*((uint16_t*)address));
-    Serial.println(address[0],HEX);
-    Serial.println(address[1],HEX);
-    Serial.println(address[2],HEX);
-    }
+    // //shift for the correct positions
+    df_page_addr_t temp = (page << (memory->bits_per_page - 8));
+    
+    //resolve endianness issue (big endian)
+    address[2] = 0;                                 //Dummy
+    address[1] = (uint8_t)(temp & 0xff);            //LSB
+    address[0] = (uint8_t)((temp >> 8) & 0xff);     //MSB
+   
+    // Serial.println("Address in fn - 1");
+   
+    // Serial.print("bits/page: ");
+    // Serial.println(memory->bits_per_page);
+    // Serial.println(memory->actual_page_size);
+    // Serial.print(page);
+    // Serial.print(" ");
+    // Serial.print(temp);
+    // Serial.print(" ");
+    // Serial.print(" converted address: ");
+    // Serial.print(*((uint16_t *)address),HEX);
+    // Serial.print(" out order -> (MSB->LSB): ");
+    // Serial.print(address[0],HEX);
+    // Serial.print(":");
+    // Serial.print(address[1],HEX);
+    // Serial.print(":");
+    // Serial.print(address[2],HEX);
+    // Serial.println();
+
+    
 }
 
 void
